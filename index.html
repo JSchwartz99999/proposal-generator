@@ -1,0 +1,1557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proposal Pro</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/docx/8.2.0/docx.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PptxGenJS/3.12.0/pptxgen.bundle.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f8f9fb;
+            min-height: 100vh;
+            color: #1a1a2e;
+        }
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: #fff;
+            border-right: 1px solid #e5e7eb;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 32px;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: #7c3aed;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1a1a2e;
+        }
+
+        .nav-section {
+            margin-bottom: 24px;
+        }
+
+        .nav-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #9ca3af;
+            margin-bottom: 12px;
+        }
+
+        .nav-items {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .nav-item {
+            padding: 10px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #4b5563;
+            transition: all 0.15s ease;
+            border: none;
+            background: transparent;
+            text-align: left;
+            width: 100%;
+        }
+
+        .nav-item:hover {
+            background: #f3f4f6;
+            color: #1a1a2e;
+        }
+
+        .nav-item.active {
+            background: #f3e8ff;
+            color: #7c3aed;
+        }
+
+        .api-section {
+            margin-top: auto;
+            padding-top: 24px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .api-section label {
+            font-size: 12px;
+            font-weight: 500;
+            color: #6b7280;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .api-input-wrap {
+            display: flex;
+            gap: 6px;
+        }
+
+        .api-input-wrap input {
+            flex: 1;
+            padding: 8px 10px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 13px;
+            background: #f9fafb;
+        }
+
+        .api-input-wrap input:focus {
+            outline: none;
+            border-color: #7c3aed;
+            background: #fff;
+        }
+
+        .api-toggle-btn {
+            padding: 8px 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            background: #fff;
+            cursor: pointer;
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .api-status {
+            font-size: 11px;
+            margin-top: 6px;
+            color: #9ca3af;
+        }
+
+        .api-status.connected {
+            color: #10b981;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .content-header {
+            padding: 20px 32px;
+            background: #fff;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .content-header h1 {
+            font-size: 22px;
+            font-weight: 600;
+            color: #1a1a2e;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 18px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-secondary {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            color: #4b5563;
+        }
+
+        .btn-secondary:hover {
+            border-color: #7c3aed;
+            color: #7c3aed;
+        }
+
+        .btn-primary {
+            background: #7c3aed;
+            border: 1px solid #7c3aed;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: #6d28d9;
+        }
+
+        .btn-primary:disabled {
+            background: #c4b5fd;
+            border-color: #c4b5fd;
+            cursor: not-allowed;
+        }
+
+        .content-body {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* Tabs */
+        .tab-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0;
+            background: #fff;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 0 32px;
+        }
+
+        .tab {
+            padding: 14px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #6b7280;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -1px;
+            transition: all 0.15s ease;
+        }
+
+        .tab:hover {
+            color: #1a1a2e;
+        }
+
+        .tab.active {
+            color: #7c3aed;
+            border-bottom-color: #7c3aed;
+        }
+
+        .tab-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 28px 32px;
+        }
+
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        /* Form Styles */
+        .form-section {
+            margin-bottom: 32px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1a1a2e;
+        }
+
+        .section-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 40px;
+            height: 22px;
+            background: #e5e7eb;
+            border-radius: 11px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .toggle-switch.active {
+            background: #7c3aed;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 18px;
+            height: 18px;
+            background: #fff;
+            border-radius: 50%;
+            transition: transform 0.2s;
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(18px);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 6px;
+        }
+
+        .form-group label .optional {
+            color: #9ca3af;
+            font-weight: 400;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.15s ease;
+            background: #fff;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #7c3aed;
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .helper-text {
+            font-size: 12px;
+            color: #9ca3af;
+            margin-top: 4px;
+        }
+
+        /* Sections Checklist */
+        .sections-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .section-check {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 14px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .section-check:hover {
+            border-color: #7c3aed;
+        }
+
+        .section-check.checked {
+            background: #f3e8ff;
+            border-color: #7c3aed;
+        }
+
+        .section-check input {
+            display: none;
+        }
+
+        .check-box {
+            width: 18px;
+            height: 18px;
+            border: 2px solid #d1d5db;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: transparent;
+            transition: all 0.15s ease;
+        }
+
+        .section-check.checked .check-box {
+            background: #7c3aed;
+            border-color: #7c3aed;
+            color: #fff;
+        }
+
+        .section-check-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        /* Preview Panel */
+        .preview-panel {
+            width: 45%;
+            background: #fff;
+            border-left: 1px solid #e5e7eb;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .preview-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .preview-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .preview-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .preview-btn {
+            padding: 6px 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            background: #fff;
+            font-size: 13px;
+            font-weight: 500;
+            color: #4b5563;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .preview-btn:hover:not(:disabled) {
+            border-color: #7c3aed;
+            color: #7c3aed;
+        }
+
+        .preview-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .preview-btn.active {
+            background: #7c3aed;
+            border-color: #7c3aed;
+            color: #fff;
+        }
+
+        .preview-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+        }
+
+        .preview-placeholder {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #9ca3af;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .proposal-preview {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .proposal-section {
+            padding: 24px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .proposal-section:last-child {
+            border-bottom: none;
+        }
+
+        .proposal-section h2 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #7c3aed;
+            margin-bottom: 12px;
+        }
+
+        .proposal-section h3 {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin-bottom: 8px;
+            margin-top: 16px;
+        }
+
+        .proposal-section h3:first-of-type {
+            margin-top: 0;
+        }
+
+        .proposal-section p {
+            font-size: 14px;
+            line-height: 1.7;
+            color: #4b5563;
+            margin-bottom: 12px;
+            white-space: pre-wrap;
+        }
+
+        .proposal-section ul {
+            margin-left: 20px;
+            margin-bottom: 12px;
+        }
+
+        .proposal-section li {
+            font-size: 14px;
+            line-height: 1.7;
+            color: #4b5563;
+            margin-bottom: 4px;
+        }
+
+        /* Progress indicator */
+        .generation-progress {
+            padding: 24px;
+            text-align: center;
+        }
+
+        .progress-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #e5e7eb;
+            border-top-color: #7c3aed;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .progress-text {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .progress-section {
+            font-size: 13px;
+            color: #9ca3af;
+            margin-top: 8px;
+        }
+
+        /* Saved indicator */
+        .saved-indicator {
+            font-size: 12px;
+            color: #10b981;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        @media (max-width: 1200px) {
+            .content-body {
+                flex-direction: column;
+            }
+            .preview-panel {
+                width: 100%;
+                border-left: none;
+                border-top: 1px solid #e5e7eb;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .app-container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #e5e7eb;
+            }
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            .sections-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">P</div>
+                <span class="logo-text">Proposal Pro</span>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-label">Templates</div>
+                <div class="nav-items">
+                    <button class="nav-item active" data-template="custom" onclick="setTemplate('custom')">
+                        Custom Proposal
+                    </button>
+                    <button class="nav-item" data-template="saas" onclick="setTemplate('saas')">
+                        SaaS / Software
+                    </button>
+                    <button class="nav-item" data-template="consulting" onclick="setTemplate('consulting')">
+                        Consulting Services
+                    </button>
+                    <button class="nav-item" data-template="enterprise" onclick="setTemplate('enterprise')">
+                        Enterprise RFP
+                    </button>
+                </div>
+            </div>
+
+            <div class="api-section">
+                <label>API Key</label>
+                <div class="api-input-wrap">
+                    <input type="password" id="apiKey" placeholder="sk-ant-api03-..." oninput="saveApiKey(this.value)">
+                    <button class="api-toggle-btn" onclick="toggleApiKeyVisibility()" id="toggleKeyBtn">Show</button>
+                </div>
+                <div class="api-status" id="keyStatus">Not connected</div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="content-header">
+                <h1>Create Proposal</h1>
+                <div class="header-actions">
+                    <button class="btn btn-secondary" onclick="clearForm()">Clear</button>
+                    <button class="btn btn-primary" onclick="generateProposal()" id="generateBtn">
+                        Generate Proposal
+                    </button>
+                </div>
+            </header>
+
+            <div class="content-body">
+                <div class="tab-container">
+                    <div class="tabs">
+                        <button class="tab active" data-tab="client" onclick="showTab('client')">Client Info</button>
+                        <button class="tab" data-tab="your-company" onclick="showTab('your-company')">Your Company</button>
+                        <button class="tab" data-tab="solution" onclick="showTab('solution')">Solution</button>
+                        <button class="tab" data-tab="sections" onclick="showTab('sections')">Sections</button>
+                    </div>
+
+                    <div class="tab-content">
+                        <!-- Client Info Tab -->
+                        <div class="tab-panel active" id="tab-client">
+                            <div class="form-section">
+                                <div class="section-title">Client Details</div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Client Company Name</label>
+                                        <input type="text" id="clientCompany" placeholder="Acme Corporation">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Industry</label>
+                                        <input type="text" id="clientIndustry" placeholder="Financial Services">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Primary Contact Name</label>
+                                        <input type="text" id="clientContact" placeholder="Sarah Johnson">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Contact Title</label>
+                                        <input type="text" id="clientTitle" placeholder="VP of Operations">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Company Size</label>
+                                    <select id="clientSize">
+                                        <option value="">Select size...</option>
+                                        <option value="startup">Startup (1-50 employees)</option>
+                                        <option value="smb">SMB (51-200 employees)</option>
+                                        <option value="midmarket">Mid-Market (201-1000 employees)</option>
+                                        <option value="enterprise">Enterprise (1000+ employees)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-section">
+                                <div class="section-title">Project Context</div>
+                                <div class="form-group">
+                                    <label>Client's Problem / Challenge</label>
+                                    <textarea id="clientProblem" placeholder="Describe the main problem or challenge the client is trying to solve. Be specific about pain points, current situation, and impact on their business."></textarea>
+                                    <div class="helper-text">The more specific, the better the proposal will address their needs</div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Client's Goals / Desired Outcomes</label>
+                                    <textarea id="clientGoals" placeholder="What does success look like for them? What outcomes are they hoping to achieve?"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label>Budget Range <span class="optional">(optional)</span></label>
+                                    <input type="text" id="clientBudget" placeholder="e.g., $50,000 - $100,000">
+                                </div>
+                                <div class="form-group">
+                                    <label>Timeline / Deadline <span class="optional">(optional)</span></label>
+                                    <input type="text" id="clientTimeline" placeholder="e.g., Q2 2024, 3 months">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Your Company Tab -->
+                        <div class="tab-panel" id="tab-your-company">
+                            <div class="form-section">
+                                <div class="section-header">
+                                    <div class="section-title">Your Company Info</div>
+                                    <span class="saved-indicator" id="companySaved" style="display: none;">Saved locally</span>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Company Name</label>
+                                        <input type="text" id="yourCompany" placeholder="Your Company Inc." oninput="saveCompanyInfo()">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Your Name / Sender</label>
+                                        <input type="text" id="yourName" placeholder="John Smith" oninput="saveCompanyInfo()">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Your Title</label>
+                                        <input type="text" id="yourTitle" placeholder="Director of Sales" oninput="saveCompanyInfo()">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Email</label>
+                                        <input type="email" id="yourEmail" placeholder="john@company.com" oninput="saveCompanyInfo()">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Company Description</label>
+                                    <textarea id="yourDescription" placeholder="Brief description of what your company does and your value proposition" oninput="saveCompanyInfo()"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label>Key Differentiators</label>
+                                    <textarea id="yourDifferentiators" placeholder="What makes you different from competitors? List 2-3 key advantages." oninput="saveCompanyInfo()"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="form-section">
+                                <div class="section-title">Social Proof</div>
+                                <div class="form-group">
+                                    <label>Notable Clients / Logos <span class="optional">(optional)</span></label>
+                                    <input type="text" id="yourClients" placeholder="e.g., Stripe, Notion, Figma" oninput="saveCompanyInfo()">
+                                </div>
+                                <div class="form-group">
+                                    <label>Key Stats / Results <span class="optional">(optional)</span></label>
+                                    <textarea id="yourStats" placeholder="e.g., 500+ clients served, 98% client retention, $50M+ revenue generated for clients" oninput="saveCompanyInfo()"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label>Relevant Case Study <span class="optional">(optional)</span></label>
+                                    <textarea id="yourCaseStudy" placeholder="Brief description of a relevant success story with a similar client" oninput="saveCompanyInfo()"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Solution Tab -->
+                        <div class="tab-panel" id="tab-solution">
+                            <div class="form-section">
+                                <div class="section-title">Proposed Solution</div>
+                                <div class="form-group">
+                                    <label>Solution Overview</label>
+                                    <textarea id="solutionOverview" placeholder="Describe the solution you're proposing. What will you deliver?"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label>Key Deliverables</label>
+                                    <textarea id="solutionDeliverables" placeholder="List the main deliverables (one per line):&#10;- Deliverable 1&#10;- Deliverable 2&#10;- Deliverable 3"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label>Approach / Methodology <span class="optional">(optional)</span></label>
+                                    <textarea id="solutionApproach" placeholder="Describe your approach or methodology for delivering this solution"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="form-section">
+                                <div class="section-title">Investment</div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Pricing</label>
+                                        <input type="text" id="solutionPricing" placeholder="e.g., $75,000 or $5,000/month">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Timeline</label>
+                                        <input type="text" id="solutionTimeline" placeholder="e.g., 8 weeks, 3 months">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Pricing Notes <span class="optional">(optional)</span></label>
+                                    <textarea id="solutionPricingNotes" placeholder="Any additional pricing details, payment terms, or what's included/excluded"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sections Tab -->
+                        <div class="tab-panel" id="tab-sections">
+                            <div class="form-section">
+                                <div class="section-title">Include These Sections</div>
+                                <div class="helper-text" style="margin-bottom: 16px;">Select which sections to include in your proposal</div>
+                                <div class="sections-grid">
+                                    <label class="section-check checked">
+                                        <input type="checkbox" value="executive_summary" checked>
+                                        <span class="check-box">✓</span>
+                                        <span class="section-check-label">Executive Summary</span>
+                                    </label>
+                                    <label class="section-check checked">
+                                        <input type="checkbox" value="problem_statement" checked>
+                                        <span class="check-box">✓</span>
+                                        <span class="section-check-label">Problem Statement</span>
+                                    </label>
+                                    <label class="section-check checked">
+                                        <input type="checkbox" value="proposed_solution" checked>
+                                        <span class="check-box">✓</span>
+                                        <span class="section-check-label">Proposed Solution</span>
+                                    </label>
+                                    <label class="section-check checked">
+                                        <input type="checkbox" value="deliverables" checked>
+                                        <span class="check-box">✓</span>
+                                        <span class="section-check-label">Deliverables & Scope</span>
+                                    </label>
+                                    <label class="section-check checked">
+                                        <input type="checkbox" value="timeline" checked>
+                                        <span class="check-box">✓</span>
+                                        <span class="section-check-label">Timeline & Milestones</span>
+                                    </label>
+                                    <label class="section-check checked">
+                                        <input type="checkbox" value="investment" checked>
+                                        <span class="check-box">✓</span>
+                                        <span class="section-check-label">Investment & Pricing</span>
+                                    </label>
+                                    <label class="section-check">
+                                        <input type="checkbox" value="about_us">
+                                        <span class="check-box">✓</span>
+                                        <span class="section-check-label">About Us</span>
+                                    </label>
+                                    <label class="section-check">
+                                        <input type="checkbox" value="case_study">
+                                        <span class="check-box">✓</span>
+                                        <span class="section-check-label">Case Study</span>
+                                    </label>
+                                    <label class="section-check">
+                                        <input type="checkbox" value="team">
+                                        <span class="check-box">✓</span>
+                                        <span class="section-check-label">Team / Who You'll Work With</span>
+                                    </label>
+                                    <label class="section-check checked">
+                                        <input type="checkbox" value="next_steps" checked>
+                                        <span class="check-box">✓</span>
+                                        <span class="section-check-label">Next Steps</span>
+                                    </label>
+                                    <label class="section-check">
+                                        <input type="checkbox" value="terms">
+                                        <span class="check-box">✓</span>
+                                        <span class="section-check-label">Terms & Conditions</span>
+                                    </label>
+                                    <label class="section-check">
+                                        <input type="checkbox" value="appendix">
+                                        <span class="check-box">✓</span>
+                                        <span class="section-check-label">Appendix / Additional Info</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-section">
+                                <div class="section-title">Tone & Style</div>
+                                <div class="form-group">
+                                    <label>Proposal Tone</label>
+                                    <select id="proposalTone">
+                                        <option value="professional">Professional & Polished</option>
+                                        <option value="consultative">Consultative & Advisory</option>
+                                        <option value="bold">Bold & Confident</option>
+                                        <option value="friendly">Friendly & Approachable</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Additional Instructions <span class="optional">(optional)</span></label>
+                                    <textarea id="additionalInstructions" placeholder="Any specific requirements, things to emphasize, or special considerations"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Preview Panel -->
+                <div class="preview-panel">
+                    <div class="preview-header">
+                        <span class="preview-title">Preview</span>
+                        <div class="preview-actions">
+                            <button class="preview-btn" onclick="exportToWord()" id="exportWordBtn" disabled>
+                                Export Word
+                            </button>
+                            <button class="preview-btn" onclick="exportToPptx()" id="exportPptxBtn" disabled>
+                                Export PPT
+                            </button>
+                            <button class="preview-btn" onclick="copyProposal()" id="copyBtn" disabled>
+                                Copy
+                            </button>
+                        </div>
+                    </div>
+                    <div class="preview-content" id="previewContent">
+                        <div class="preview-placeholder">
+                            Fill in the details and click "Generate Proposal" to see a preview
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let currentTemplate = 'custom';
+        let generatedProposal = null;
+        let proposalSections = {};
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadApiKey();
+            loadCompanyInfo();
+            initSectionToggles();
+        });
+
+        function loadApiKey() {
+            const savedKey = localStorage.getItem('anthropic_api_key');
+            if (savedKey) {
+                document.getElementById('apiKey').value = savedKey;
+                updateKeyStatus(true);
+            }
+        }
+
+        function saveApiKey(key) {
+            if (key && key.trim()) {
+                localStorage.setItem('anthropic_api_key', key.trim());
+                updateKeyStatus(true);
+            } else {
+                localStorage.removeItem('anthropic_api_key');
+                updateKeyStatus(false);
+            }
+        }
+
+        function updateKeyStatus(connected) {
+            const status = document.getElementById('keyStatus');
+            if (connected) {
+                status.textContent = 'Connected';
+                status.classList.add('connected');
+            } else {
+                status.textContent = 'Not connected';
+                status.classList.remove('connected');
+            }
+        }
+
+        function toggleApiKeyVisibility() {
+            const input = document.getElementById('apiKey');
+            const btn = document.getElementById('toggleKeyBtn');
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.textContent = 'Hide';
+            } else {
+                input.type = 'password';
+                btn.textContent = 'Show';
+            }
+        }
+
+        function loadCompanyInfo() {
+            const saved = localStorage.getItem('proposal_company_info');
+            if (saved) {
+                const info = JSON.parse(saved);
+                document.getElementById('yourCompany').value = info.company || '';
+                document.getElementById('yourName').value = info.name || '';
+                document.getElementById('yourTitle').value = info.title || '';
+                document.getElementById('yourEmail').value = info.email || '';
+                document.getElementById('yourDescription').value = info.description || '';
+                document.getElementById('yourDifferentiators').value = info.differentiators || '';
+                document.getElementById('yourClients').value = info.clients || '';
+                document.getElementById('yourStats').value = info.stats || '';
+                document.getElementById('yourCaseStudy').value = info.caseStudy || '';
+                document.getElementById('companySaved').style.display = 'flex';
+            }
+        }
+
+        function saveCompanyInfo() {
+            const info = {
+                company: document.getElementById('yourCompany').value,
+                name: document.getElementById('yourName').value,
+                title: document.getElementById('yourTitle').value,
+                email: document.getElementById('yourEmail').value,
+                description: document.getElementById('yourDescription').value,
+                differentiators: document.getElementById('yourDifferentiators').value,
+                clients: document.getElementById('yourClients').value,
+                stats: document.getElementById('yourStats').value,
+                caseStudy: document.getElementById('yourCaseStudy').value
+            };
+            localStorage.setItem('proposal_company_info', JSON.stringify(info));
+            document.getElementById('companySaved').style.display = 'flex';
+        }
+
+        function initSectionToggles() {
+            document.querySelectorAll('.section-check').forEach(label => {
+                label.addEventListener('click', (e) => {
+                    if (e.target.tagName !== 'INPUT') {
+                        const checkbox = label.querySelector('input');
+                        checkbox.checked = !checkbox.checked;
+                    }
+                    label.classList.toggle('checked', label.querySelector('input').checked);
+                });
+            });
+        }
+
+        function showTab(tabId) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            document.querySelector(`.tab[data-tab="${tabId}"]`).classList.add('active');
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+        }
+
+        function setTemplate(template) {
+            currentTemplate = template;
+            document.querySelectorAll('.nav-item').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.template === template);
+            });
+
+            // Preset sections based on template
+            const presets = {
+                custom: ['executive_summary', 'problem_statement', 'proposed_solution', 'deliverables', 'timeline', 'investment', 'next_steps'],
+                saas: ['executive_summary', 'problem_statement', 'proposed_solution', 'deliverables', 'investment', 'next_steps'],
+                consulting: ['executive_summary', 'problem_statement', 'proposed_solution', 'deliverables', 'timeline', 'investment', 'about_us', 'case_study', 'next_steps'],
+                enterprise: ['executive_summary', 'problem_statement', 'proposed_solution', 'deliverables', 'timeline', 'investment', 'about_us', 'team', 'case_study', 'terms', 'next_steps']
+            };
+
+            document.querySelectorAll('.section-check').forEach(label => {
+                const checkbox = label.querySelector('input');
+                const isChecked = presets[template].includes(checkbox.value);
+                checkbox.checked = isChecked;
+                label.classList.toggle('checked', isChecked);
+            });
+        }
+
+        function getSelectedSections() {
+            const selected = [];
+            document.querySelectorAll('.section-check input:checked').forEach(cb => {
+                selected.push(cb.value);
+            });
+            return selected;
+        }
+
+        function getFormData() {
+            return {
+                client: {
+                    company: document.getElementById('clientCompany').value,
+                    industry: document.getElementById('clientIndustry').value,
+                    contact: document.getElementById('clientContact').value,
+                    title: document.getElementById('clientTitle').value,
+                    size: document.getElementById('clientSize').value,
+                    problem: document.getElementById('clientProblem').value,
+                    goals: document.getElementById('clientGoals').value,
+                    budget: document.getElementById('clientBudget').value,
+                    timeline: document.getElementById('clientTimeline').value
+                },
+                yourCompany: {
+                    company: document.getElementById('yourCompany').value,
+                    name: document.getElementById('yourName').value,
+                    title: document.getElementById('yourTitle').value,
+                    email: document.getElementById('yourEmail').value,
+                    description: document.getElementById('yourDescription').value,
+                    differentiators: document.getElementById('yourDifferentiators').value,
+                    clients: document.getElementById('yourClients').value,
+                    stats: document.getElementById('yourStats').value,
+                    caseStudy: document.getElementById('yourCaseStudy').value
+                },
+                solution: {
+                    overview: document.getElementById('solutionOverview').value,
+                    deliverables: document.getElementById('solutionDeliverables').value,
+                    approach: document.getElementById('solutionApproach').value,
+                    pricing: document.getElementById('solutionPricing').value,
+                    timeline: document.getElementById('solutionTimeline').value,
+                    pricingNotes: document.getElementById('solutionPricingNotes').value
+                },
+                sections: getSelectedSections(),
+                tone: document.getElementById('proposalTone').value,
+                additionalInstructions: document.getElementById('additionalInstructions').value
+            };
+        }
+
+        function buildPrompt(data) {
+            const sectionDescriptions = {
+                executive_summary: "Executive Summary - A compelling overview of the entire proposal (2-3 paragraphs)",
+                problem_statement: "Problem Statement - Articulate their challenge and its business impact",
+                proposed_solution: "Proposed Solution - Your solution and how it addresses their needs",
+                deliverables: "Deliverables & Scope - Specific deliverables and what's included",
+                timeline: "Timeline & Milestones - Project phases and key milestones",
+                investment: "Investment & Pricing - Pricing details and value justification",
+                about_us: "About Us - Company background and why you're the right partner",
+                case_study: "Case Study - A relevant success story",
+                team: "Team - Key people who will work on this project",
+                next_steps: "Next Steps - Clear call to action and how to proceed",
+                terms: "Terms & Conditions - Standard business terms",
+                appendix: "Appendix - Additional supporting information"
+            };
+
+            const toneGuides = {
+                professional: "professional, polished, and formal - suitable for traditional enterprises",
+                consultative: "consultative and advisory - position yourself as a trusted partner",
+                bold: "bold and confident - emphasize results and differentiation",
+                friendly: "warm and approachable - build rapport while staying professional"
+            };
+
+            const sectionsToGenerate = data.sections.map(s => sectionDescriptions[s]).join('\n- ');
+
+            return `You are an expert proposal writer who creates compelling B2B proposals that win deals. Generate a complete proposal with the following sections.
+
+CLIENT INFORMATION:
+- Company: ${data.client.company || 'Not specified'}
+- Industry: ${data.client.industry || 'Not specified'}
+- Contact: ${data.client.contact || 'Not specified'} (${data.client.title || 'Not specified'})
+- Company Size: ${data.client.size || 'Not specified'}
+- Their Problem: ${data.client.problem || 'Not specified'}
+- Their Goals: ${data.client.goals || 'Not specified'}
+${data.client.budget ? `- Budget: ${data.client.budget}` : ''}
+${data.client.timeline ? `- Timeline: ${data.client.timeline}` : ''}
+
+YOUR COMPANY:
+- Company: ${data.yourCompany.company || 'Not specified'}
+- Description: ${data.yourCompany.description || 'Not specified'}
+- Differentiators: ${data.yourCompany.differentiators || 'Not specified'}
+${data.yourCompany.clients ? `- Notable Clients: ${data.yourCompany.clients}` : ''}
+${data.yourCompany.stats ? `- Key Stats: ${data.yourCompany.stats}` : ''}
+${data.yourCompany.caseStudy ? `- Case Study: ${data.yourCompany.caseStudy}` : ''}
+
+PROPOSED SOLUTION:
+- Overview: ${data.solution.overview || 'Not specified'}
+- Deliverables: ${data.solution.deliverables || 'Not specified'}
+${data.solution.approach ? `- Approach: ${data.solution.approach}` : ''}
+- Pricing: ${data.solution.pricing || 'Not specified'}
+- Timeline: ${data.solution.timeline || 'Not specified'}
+${data.solution.pricingNotes ? `- Pricing Notes: ${data.solution.pricingNotes}` : ''}
+
+SECTIONS TO GENERATE:
+- ${sectionsToGenerate}
+
+TONE: ${toneGuides[data.tone]}
+
+${data.additionalInstructions ? `ADDITIONAL INSTRUCTIONS: ${data.additionalInstructions}` : ''}
+
+FORMATTING REQUIREMENTS:
+1. Format each section with a clear header using "## Section Name"
+2. Use bullet points where appropriate
+3. Be specific and avoid generic filler content
+4. Make the Executive Summary compelling - it should sell the entire proposal
+5. In the Investment section, justify the value - tie pricing to outcomes
+6. Make Next Steps specific and actionable with a clear call-to-action
+7. Reference the client's specific problem and goals throughout
+8. Keep language concise and impactful - no fluff
+
+Generate the complete proposal now, with each requested section clearly separated by "## Section Name" headers.`;
+        }
+
+        async function callClaude(prompt) {
+            const apiKey = document.getElementById('apiKey').value;
+            if (!apiKey) {
+                throw new Error('Please enter your API key');
+            }
+
+            const response = await fetch('https://api.anthropic.com/v1/messages', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-api-key': apiKey,
+                    'anthropic-version': '2023-06-01',
+                    'anthropic-dangerous-direct-browser-access': 'true'
+                },
+                body: JSON.stringify({
+                    model: 'claude-sonnet-4-20250514',
+                    max_tokens: 4096,
+                    messages: [{ role: 'user', content: prompt }]
+                })
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error?.message || 'API request failed');
+            }
+
+            const result = await response.json();
+            return result.content[0].text;
+        }
+
+        async function generateProposal() {
+            const btn = document.getElementById('generateBtn');
+            const preview = document.getElementById('previewContent');
+
+            btn.disabled = true;
+            btn.textContent = 'Generating...';
+
+            preview.innerHTML = `
+                <div class="generation-progress">
+                    <div class="progress-spinner"></div>
+                    <div class="progress-text">Generating your proposal...</div>
+                    <div class="progress-section">This may take 30-60 seconds</div>
+                </div>
+            `;
+
+            try {
+                const data = getFormData();
+                const prompt = buildPrompt(data);
+                const proposal = await callClaude(prompt);
+
+                generatedProposal = proposal;
+                proposalSections = parseProposal(proposal);
+                renderProposal(proposalSections, data);
+
+                document.getElementById('exportWordBtn').disabled = false;
+                document.getElementById('exportPptxBtn').disabled = false;
+                document.getElementById('copyBtn').disabled = false;
+            } catch (error) {
+                preview.innerHTML = `
+                    <div class="preview-placeholder" style="color: #ef4444;">
+                        Error: ${error.message}
+                    </div>
+                `;
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Generate Proposal';
+            }
+        }
+
+        function parseProposal(text) {
+            const sections = {};
+            const parts = text.split(/^## /gm).filter(p => p.trim());
+
+            parts.forEach(part => {
+                const lines = part.trim().split('\n');
+                const title = lines[0].trim();
+                const content = lines.slice(1).join('\n').trim();
+                sections[title] = content;
+            });
+
+            return sections;
+        }
+
+        function renderProposal(sections, data) {
+            const preview = document.getElementById('previewContent');
+
+            let html = '<div class="proposal-preview">';
+
+            // Title section
+            html += `
+                <div class="proposal-section" style="background: #f3e8ff; text-align: center;">
+                    <h2 style="font-size: 24px; color: #1a1a2e; margin-bottom: 8px;">Proposal for ${data.client.company || 'Client'}</h2>
+                    <p style="color: #6b7280; margin-bottom: 0;">Prepared by ${data.yourCompany.company || 'Your Company'}</p>
+                    <p style="color: #9ca3af; font-size: 13px; margin-bottom: 0;">${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                </div>
+            `;
+
+            // Content sections
+            Object.entries(sections).forEach(([title, content]) => {
+                const formattedContent = formatContent(content);
+                html += `
+                    <div class="proposal-section">
+                        <h2>${title}</h2>
+                        ${formattedContent}
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            preview.innerHTML = html;
+        }
+
+        function formatContent(content) {
+            // Convert markdown-style formatting to HTML
+            let html = content
+                .replace(/### (.+)/g, '<h3>$1</h3>')
+                .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                .replace(/^\- (.+)/gm, '<li>$1</li>')
+                .replace(/^\d+\. (.+)/gm, '<li>$1</li>');
+
+            // Wrap consecutive li items in ul
+            html = html.replace(/(<li>.*<\/li>\n?)+/g, '<ul>$&</ul>');
+
+            // Convert remaining lines to paragraphs
+            const lines = html.split('\n');
+            html = lines.map(line => {
+                if (line.trim() && !line.startsWith('<')) {
+                    return `<p>${line}</p>`;
+                }
+                return line;
+            }).join('');
+
+            return html;
+        }
+
+        async function exportToWord() {
+            if (!generatedProposal) return;
+
+            const data = getFormData();
+            const { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } = docx;
+
+            const children = [];
+
+            // Title
+            children.push(
+                new Paragraph({
+                    children: [new TextRun({ text: `Proposal for ${data.client.company || 'Client'}`, bold: true, size: 48 })],
+                    alignment: AlignmentType.CENTER,
+                    spacing: { after: 200 }
+                }),
+                new Paragraph({
+                    children: [new TextRun({ text: `Prepared by ${data.yourCompany.company || 'Your Company'}`, size: 24, color: '666666' })],
+                    alignment: AlignmentType.CENTER,
+                    spacing: { after: 100 }
+                }),
+                new Paragraph({
+                    children: [new TextRun({ text: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }), size: 22, color: '999999' })],
+                    alignment: AlignmentType.CENTER,
+                    spacing: { after: 600 }
+                })
+            );
+
+            // Sections
+            Object.entries(proposalSections).forEach(([title, content]) => {
+                children.push(
+                    new Paragraph({
+                        text: title,
+                        heading: HeadingLevel.HEADING_1,
+                        spacing: { before: 400, after: 200 }
+                    })
+                );
+
+                const lines = content.split('\n');
+                lines.forEach(line => {
+                    if (line.trim()) {
+                        if (line.startsWith('- ')) {
+                            children.push(
+                                new Paragraph({
+                                    children: [new TextRun({ text: line.substring(2) })],
+                                    bullet: { level: 0 },
+                                    spacing: { after: 100 }
+                                })
+                            );
+                        } else if (line.startsWith('### ')) {
+                            children.push(
+                                new Paragraph({
+                                    text: line.substring(4),
+                                    heading: HeadingLevel.HEADING_2,
+                                    spacing: { before: 200, after: 100 }
+                                })
+                            );
+                        } else {
+                            children.push(
+                                new Paragraph({
+                                    children: [new TextRun({ text: line })],
+                                    spacing: { after: 150 }
+                                })
+                            );
+                        }
+                    }
+                });
+            });
+
+            const doc = new Document({
+                sections: [{ properties: {}, children }]
+            });
+
+            const blob = await Packer.toBlob(doc);
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Proposal_${data.client.company || 'Client'}_${new Date().toISOString().split('T')[0]}.docx`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function exportToPptx() {
+            if (!generatedProposal) return;
+
+            const data = getFormData();
+            const pptx = new PptxGenJS();
+
+            pptx.layout = 'LAYOUT_WIDE';
+            pptx.title = `Proposal for ${data.client.company || 'Client'}`;
+
+            // Title slide
+            let slide = pptx.addSlide();
+            slide.addText(`Proposal for ${data.client.company || 'Client'}`, {
+                x: 0.5, y: 2, w: '90%', h: 1,
+                fontSize: 36, bold: true, color: '1a1a2e', align: 'center'
+            });
+            slide.addText(`Prepared by ${data.yourCompany.company || 'Your Company'}`, {
+                x: 0.5, y: 3.2, w: '90%', h: 0.5,
+                fontSize: 18, color: '666666', align: 'center'
+            });
+            slide.addText(new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }), {
+                x: 0.5, y: 3.8, w: '90%', h: 0.5,
+                fontSize: 14, color: '999999', align: 'center'
+            });
+
+            // Content slides
+            Object.entries(proposalSections).forEach(([title, content]) => {
+                slide = pptx.addSlide();
+
+                // Section title
+                slide.addText(title, {
+                    x: 0.5, y: 0.3, w: '90%', h: 0.8,
+                    fontSize: 28, bold: true, color: '7c3aed'
+                });
+
+                // Content - split into bullet points or paragraphs
+                const lines = content.split('\n').filter(l => l.trim());
+                const bullets = [];
+                let currentText = '';
+
+                lines.forEach(line => {
+                    if (line.startsWith('- ')) {
+                        if (currentText) {
+                            bullets.push({ text: currentText, options: { bullet: false } });
+                            currentText = '';
+                        }
+                        bullets.push({ text: line.substring(2), options: { bullet: true } });
+                    } else if (line.startsWith('### ')) {
+                        if (currentText) {
+                            bullets.push({ text: currentText, options: { bullet: false } });
+                            currentText = '';
+                        }
+                        bullets.push({ text: line.substring(4), options: { bullet: false, bold: true } });
+                    } else {
+                        if (bullets.length === 0) {
+                            currentText += (currentText ? ' ' : '') + line;
+                        } else {
+                            bullets.push({ text: line, options: { bullet: false } });
+                        }
+                    }
+                });
+
+                if (currentText) {
+                    bullets.push({ text: currentText, options: { bullet: false } });
+                }
+
+                // Add text with proper formatting
+                const textRows = bullets.slice(0, 8).map(b => ({
+                    text: b.text,
+                    options: { fontSize: 14, color: '374151', bullet: b.options.bullet, bold: b.options.bold }
+                }));
+
+                if (textRows.length > 0) {
+                    slide.addText(textRows, {
+                        x: 0.5, y: 1.3, w: '90%', h: 4,
+                        valign: 'top'
+                    });
+                }
+            });
+
+            pptx.writeFile({ fileName: `Proposal_${data.client.company || 'Client'}_${new Date().toISOString().split('T')[0]}.pptx` });
+        }
+
+        function copyProposal() {
+            if (!generatedProposal) return;
+
+            const data = getFormData();
+            let text = `PROPOSAL FOR ${(data.client.company || 'CLIENT').toUpperCase()}\n`;
+            text += `Prepared by ${data.yourCompany.company || 'Your Company'}\n`;
+            text += `${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}\n\n`;
+            text += '─'.repeat(50) + '\n\n';
+            text += generatedProposal;
+
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = document.getElementById('copyBtn');
+                btn.textContent = 'Copied!';
+                setTimeout(() => { btn.textContent = 'Copy'; }, 2000);
+            });
+        }
+
+        function clearForm() {
+            document.querySelectorAll('.tab-panel input, .tab-panel textarea, .tab-panel select').forEach(el => {
+                if (!['yourCompany', 'yourName', 'yourTitle', 'yourEmail', 'yourDescription', 'yourDifferentiators', 'yourClients', 'yourStats', 'yourCaseStudy', 'apiKey'].includes(el.id)) {
+                    el.value = '';
+                }
+            });
+            document.getElementById('previewContent').innerHTML = `
+                <div class="preview-placeholder">
+                    Fill in the details and click "Generate Proposal" to see a preview
+                </div>
+            `;
+            generatedProposal = null;
+            proposalSections = {};
+            document.getElementById('exportWordBtn').disabled = true;
+            document.getElementById('exportPptxBtn').disabled = true;
+            document.getElementById('copyBtn').disabled = true;
+        }
+    </script>
+</body>
+</html>
