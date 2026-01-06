@@ -304,44 +304,6 @@
             color: #1a1a2e;
         }
 
-        .section-toggle {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 13px;
-            color: #6b7280;
-        }
-
-        .toggle-switch {
-            position: relative;
-            width: 40px;
-            height: 22px;
-            background: #e5e7eb;
-            border-radius: 11px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .toggle-switch.active {
-            background: #7c3aed;
-        }
-
-        .toggle-switch::after {
-            content: '';
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            width: 18px;
-            height: 18px;
-            background: #fff;
-            border-radius: 50%;
-            transition: transform 0.2s;
-        }
-
-        .toggle-switch.active::after {
-            transform: translateX(18px);
-        }
-
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -505,12 +467,6 @@
             cursor: not-allowed;
         }
 
-        .preview-btn.active {
-            background: #7c3aed;
-            border-color: #7c3aed;
-            color: #fff;
-        }
-
         .preview-content {
             flex: 1;
             overflow-y: auto;
@@ -537,6 +493,7 @@
         .proposal-section {
             padding: 24px;
             border-bottom: 1px solid #e5e7eb;
+            position: relative;
         }
 
         .proposal-section:last-child {
@@ -556,10 +513,6 @@
             color: #1a1a2e;
             margin-bottom: 8px;
             margin-top: 16px;
-        }
-
-        .proposal-section h3:first-of-type {
-            margin-top: 0;
         }
 
         .proposal-section p {
@@ -622,6 +575,118 @@
             gap: 4px;
         }
 
+        /* History items */
+        .history-item {
+            padding: 10px 12px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .history-item:hover {
+            border-color: #7c3aed;
+            background: #f3e8ff;
+        }
+
+        .history-item-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .history-item-meta {
+            font-size: 11px;
+            color: #9ca3af;
+        }
+
+        /* Editable sections */
+        .editable-section:hover .edit-indicator {
+            opacity: 1;
+        }
+
+        .edit-indicator {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            font-size: 10px;
+            color: #9ca3af;
+            background: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            opacity: 0;
+            transition: opacity 0.15s ease;
+            pointer-events: none;
+        }
+
+        .section-content-editable {
+            min-height: 60px;
+            outline: none;
+            border-radius: 4px;
+            transition: all 0.15s ease;
+        }
+
+        .section-content-editable:focus {
+            background: #fefce8;
+            box-shadow: inset 0 0 0 2px #7c3aed;
+            padding: 8px;
+            margin: -8px;
+        }
+
+        /* Save modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: #fff;
+            border-radius: 12px;
+            padding: 24px;
+            width: 400px;
+            max-width: 90%;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin-bottom: 16px;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        .modal-input:focus {
+            outline: none;
+            border-color: #7c3aed;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
         @media (max-width: 1200px) {
             .content-body {
                 flex-direction: column;
@@ -675,6 +740,16 @@
                     <button class="nav-item" data-template="enterprise" onclick="setTemplate('enterprise')">
                         Enterprise RFP
                     </button>
+                </div>
+            </div>
+
+            <div class="nav-section" style="flex: 1; min-height: 0; display: flex; flex-direction: column; border-top: 1px solid #e5e7eb; padding-top: 16px; margin-top: 8px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <div class="nav-label" style="margin-bottom: 0;">Recent Proposals</div>
+                    <button onclick="clearHistory()" style="font-size: 11px; color: #9ca3af; background: none; border: none; cursor: pointer;">Clear</button>
+                </div>
+                <div id="historyList" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;">
+                    <div style="font-size: 12px; color: #9ca3af; text-align: center; padding: 20px 10px;">No saved proposals yet</div>
                 </div>
             </div>
 
@@ -953,15 +1028,10 @@
                     <div class="preview-header">
                         <span class="preview-title">Preview</span>
                         <div class="preview-actions">
-                            <button class="preview-btn" onclick="exportToWord()" id="exportWordBtn" disabled>
-                                Export Word
-                            </button>
-                            <button class="preview-btn" onclick="exportToPptx()" id="exportPptxBtn" disabled>
-                                Export PPT
-                            </button>
-                            <button class="preview-btn" onclick="copyProposal()" id="copyBtn" disabled>
-                                Copy
-                            </button>
+                            <button class="preview-btn" onclick="showSaveModal()" id="saveBtn" disabled>Save</button>
+                            <button class="preview-btn" onclick="exportToWord()" id="exportWordBtn" disabled>Export Word</button>
+                            <button class="preview-btn" onclick="exportToPptx()" id="exportPptxBtn" disabled>Export PPT</button>
+                            <button class="preview-btn" onclick="copyProposal()" id="copyBtn" disabled>Copy</button>
                         </div>
                     </div>
                     <div class="preview-content" id="previewContent">
@@ -974,15 +1044,30 @@
         </main>
     </div>
 
+    <!-- Save Modal -->
+    <div class="modal-overlay" id="saveModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-title">Save Proposal</div>
+            <input type="text" class="modal-input" id="saveProposalName" placeholder="Proposal name (e.g., Acme Q1 Proposal)">
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeSaveModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="confirmSaveProposal()">Save</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         let currentTemplate = 'custom';
         let generatedProposal = null;
         let proposalSections = {};
+        let proposalHistory = [];
+        let currentFormData = null;
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             loadApiKey();
             loadCompanyInfo();
+            loadHistory();
             initSectionToggles();
         });
 
@@ -1060,6 +1145,105 @@
             document.getElementById('companySaved').style.display = 'flex';
         }
 
+        // History functions
+        function loadHistory() {
+            const saved = localStorage.getItem('proposal_history');
+            if (saved) {
+                proposalHistory = JSON.parse(saved);
+            }
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const container = document.getElementById('historyList');
+            if (proposalHistory.length === 0) {
+                container.innerHTML = '<div style="font-size: 12px; color: #9ca3af; text-align: center; padding: 20px 10px;">No saved proposals yet</div>';
+                return;
+            }
+
+            container.innerHTML = proposalHistory.map((item, index) => `
+                <div class="history-item" onclick="loadFromHistory(${index})">
+                    <div class="history-item-name">${item.name}</div>
+                    <div class="history-item-meta">${item.clientCompany || 'No client'} - ${new Date(item.timestamp).toLocaleDateString()}</div>
+                </div>
+            `).join('');
+        }
+
+        function loadFromHistory(index) {
+            const item = proposalHistory[index];
+            if (!item) return;
+
+            // Load form data
+            document.getElementById('clientCompany').value = item.formData.client.company || '';
+            document.getElementById('clientIndustry').value = item.formData.client.industry || '';
+            document.getElementById('clientContact').value = item.formData.client.contact || '';
+            document.getElementById('clientTitle').value = item.formData.client.title || '';
+            document.getElementById('clientSize').value = item.formData.client.size || '';
+            document.getElementById('clientProblem').value = item.formData.client.problem || '';
+            document.getElementById('clientGoals').value = item.formData.client.goals || '';
+            document.getElementById('clientBudget').value = item.formData.client.budget || '';
+            document.getElementById('clientTimeline').value = item.formData.client.timeline || '';
+
+            document.getElementById('solutionOverview').value = item.formData.solution.overview || '';
+            document.getElementById('solutionDeliverables').value = item.formData.solution.deliverables || '';
+            document.getElementById('solutionApproach').value = item.formData.solution.approach || '';
+            document.getElementById('solutionPricing').value = item.formData.solution.pricing || '';
+            document.getElementById('solutionTimeline').value = item.formData.solution.timeline || '';
+            document.getElementById('solutionPricingNotes').value = item.formData.solution.pricingNotes || '';
+
+            document.getElementById('proposalTone').value = item.formData.tone || 'professional';
+            document.getElementById('additionalInstructions').value = item.formData.additionalInstructions || '';
+
+            // Load proposal content
+            if (item.proposal && item.sections) {
+                generatedProposal = item.proposal;
+                proposalSections = item.sections;
+                currentFormData = item.formData;
+                renderProposal(proposalSections, item.formData);
+                enableButtons();
+            }
+        }
+
+        function showSaveModal() {
+            const clientName = document.getElementById('clientCompany').value || 'Untitled';
+            document.getElementById('saveProposalName').value = `${clientName} Proposal`;
+            document.getElementById('saveModal').style.display = 'flex';
+            document.getElementById('saveProposalName').focus();
+        }
+
+        function closeSaveModal() {
+            document.getElementById('saveModal').style.display = 'none';
+        }
+
+        function confirmSaveProposal() {
+            const name = document.getElementById('saveProposalName').value.trim() || 'Untitled Proposal';
+            const formData = getFormData();
+
+            const item = {
+                name: name,
+                clientCompany: formData.client.company,
+                formData: formData,
+                proposal: generatedProposal,
+                sections: proposalSections,
+                timestamp: Date.now()
+            };
+
+            proposalHistory.unshift(item);
+            if (proposalHistory.length > 20) proposalHistory.pop();
+
+            localStorage.setItem('proposal_history', JSON.stringify(proposalHistory));
+            renderHistory();
+            closeSaveModal();
+        }
+
+        function clearHistory() {
+            if (confirm('Clear all saved proposals?')) {
+                proposalHistory = [];
+                localStorage.removeItem('proposal_history');
+                renderHistory();
+            }
+        }
+
         function initSectionToggles() {
             document.querySelectorAll('.section-check').forEach(label => {
                 label.addEventListener('click', (e) => {
@@ -1085,7 +1269,6 @@
                 btn.classList.toggle('active', btn.dataset.template === template);
             });
 
-            // Preset sections based on template
             const presets = {
                 custom: ['executive_summary', 'problem_statement', 'proposed_solution', 'deliverables', 'timeline', 'investment', 'next_steps'],
                 saas: ['executive_summary', 'problem_statement', 'proposed_solution', 'deliverables', 'investment', 'next_steps'],
@@ -1250,6 +1433,13 @@ Generate the complete proposal now, with each requested section clearly separate
             return result.content[0].text;
         }
 
+        function enableButtons() {
+            document.getElementById('saveBtn').disabled = false;
+            document.getElementById('exportWordBtn').disabled = false;
+            document.getElementById('exportPptxBtn').disabled = false;
+            document.getElementById('copyBtn').disabled = false;
+        }
+
         async function generateProposal() {
             const btn = document.getElementById('generateBtn');
             const preview = document.getElementById('previewContent');
@@ -1267,16 +1457,14 @@ Generate the complete proposal now, with each requested section clearly separate
 
             try {
                 const data = getFormData();
+                currentFormData = data;
                 const prompt = buildPrompt(data);
                 const proposal = await callClaude(prompt);
 
                 generatedProposal = proposal;
                 proposalSections = parseProposal(proposal);
                 renderProposal(proposalSections, data);
-
-                document.getElementById('exportWordBtn').disabled = false;
-                document.getElementById('exportPptxBtn').disabled = false;
-                document.getElementById('copyBtn').disabled = false;
+                enableButtons();
             } catch (error) {
                 preview.innerHTML = `
                     <div class="preview-placeholder" style="color: #ef4444;">
@@ -1317,13 +1505,15 @@ Generate the complete proposal now, with each requested section clearly separate
                 </div>
             `;
 
-            // Content sections
+            // Content sections with inline editing
             Object.entries(sections).forEach(([title, content]) => {
+                const sectionKey = title.replace(/[^a-zA-Z0-9]/g, '_');
                 const formattedContent = formatContent(content);
                 html += `
-                    <div class="proposal-section">
+                    <div class="proposal-section editable-section">
+                        <span class="edit-indicator">Click to edit</span>
                         <h2>${title}</h2>
-                        ${formattedContent}
+                        <div class="section-content-editable" contenteditable="true" data-section="${sectionKey}" onblur="updateSection('${sectionKey}', '${title}', this)">${formattedContent}</div>
                     </div>
                 `;
             });
@@ -1332,18 +1522,48 @@ Generate the complete proposal now, with each requested section clearly separate
             preview.innerHTML = html;
         }
 
+        function updateSection(sectionKey, title, element) {
+            // Get the edited HTML content and convert back to text
+            const html = element.innerHTML;
+            const temp = document.createElement('div');
+            temp.innerHTML = html;
+
+            let text = temp.innerHTML
+                .replace(/<h3>/g, '### ')
+                .replace(/<\/h3>/g, '\n')
+                .replace(/<li>/g, '- ')
+                .replace(/<\/li>/g, '\n')
+                .replace(/<ul>/g, '')
+                .replace(/<\/ul>/g, '')
+                .replace(/<p>/g, '')
+                .replace(/<\/p>/g, '\n')
+                .replace(/<strong>/g, '**')
+                .replace(/<\/strong>/g, '**')
+                .replace(/<br\s*\/?>/g, '\n')
+                .replace(/<div>/g, '\n')
+                .replace(/<\/div>/g, '')
+                .replace(/&nbsp;/g, ' ')
+                .replace(/&amp;/g, '&')
+                .replace(/&lt;/g, '<')
+                .replace(/&gt;/g, '>');
+
+            proposalSections[title] = text.trim();
+
+            // Update the raw proposal text
+            generatedProposal = Object.entries(proposalSections)
+                .map(([t, c]) => `## ${t}\n\n${c}`)
+                .join('\n\n');
+        }
+
         function formatContent(content) {
-            // Convert markdown-style formatting to HTML
             let html = content
                 .replace(/### (.+)/g, '<h3>$1</h3>')
                 .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
                 .replace(/^\- (.+)/gm, '<li>$1</li>')
                 .replace(/^\d+\. (.+)/gm, '<li>$1</li>');
 
-            // Wrap consecutive li items in ul
             html = html.replace(/(<li>.*<\/li>\n?)+/g, '<ul>$&</ul>');
 
-            // Convert remaining lines to paragraphs
             const lines = html.split('\n');
             html = lines.map(line => {
                 if (line.trim() && !line.startsWith('<')) {
@@ -1358,37 +1578,39 @@ Generate the complete proposal now, with each requested section clearly separate
         async function exportToWord() {
             if (!generatedProposal) return;
 
-            const data = getFormData();
-            const { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } = docx;
+            const data = currentFormData || getFormData();
+            const { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType, BorderStyle } = docx;
 
             const children = [];
 
-            // Title
+            // Title page
             children.push(
+                new Paragraph({ children: [new TextRun({ text: '' })], spacing: { after: 2400 } }),
                 new Paragraph({
-                    children: [new TextRun({ text: `Proposal for ${data.client.company || 'Client'}`, bold: true, size: 48 })],
+                    children: [new TextRun({ text: `Proposal for ${data.client.company || 'Client'}`, bold: true, size: 56, color: '7c3aed' })],
+                    alignment: AlignmentType.CENTER,
+                    spacing: { after: 400 }
+                }),
+                new Paragraph({
+                    children: [new TextRun({ text: `Prepared by ${data.yourCompany.company || 'Your Company'}`, size: 28, color: '374151' })],
                     alignment: AlignmentType.CENTER,
                     spacing: { after: 200 }
                 }),
                 new Paragraph({
-                    children: [new TextRun({ text: `Prepared by ${data.yourCompany.company || 'Your Company'}`, size: 24, color: '666666' })],
+                    children: [new TextRun({ text: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }), size: 24, color: '6b7280' })],
                     alignment: AlignmentType.CENTER,
-                    spacing: { after: 100 }
+                    spacing: { after: 200 }
                 }),
-                new Paragraph({
-                    children: [new TextRun({ text: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }), size: 22, color: '999999' })],
-                    alignment: AlignmentType.CENTER,
-                    spacing: { after: 600 }
-                })
+                new Paragraph({ children: [new TextRun({ text: '' })], pageBreakBefore: true })
             );
 
             // Sections
             Object.entries(proposalSections).forEach(([title, content]) => {
                 children.push(
                     new Paragraph({
-                        text: title,
-                        heading: HeadingLevel.HEADING_1,
-                        spacing: { before: 400, after: 200 }
+                        children: [new TextRun({ text: title, bold: true, size: 32, color: '7c3aed' })],
+                        spacing: { before: 400, after: 200 },
+                        border: { bottom: { style: BorderStyle.SINGLE, size: 6, color: '7c3aed' } }
                     })
                 );
 
@@ -1398,25 +1620,25 @@ Generate the complete proposal now, with each requested section clearly separate
                         if (line.startsWith('- ')) {
                             children.push(
                                 new Paragraph({
-                                    children: [new TextRun({ text: line.substring(2) })],
+                                    children: [new TextRun({ text: line.substring(2), size: 22 })],
                                     bullet: { level: 0 },
-                                    spacing: { after: 100 }
+                                    spacing: { after: 80 }
                                 })
                             );
                         } else if (line.startsWith('### ')) {
                             children.push(
                                 new Paragraph({
-                                    text: line.substring(4),
-                                    heading: HeadingLevel.HEADING_2,
+                                    children: [new TextRun({ text: line.substring(4), bold: true, size: 26, color: '374151' })],
                                     spacing: { before: 200, after: 100 }
                                 })
                             );
                         } else {
+                            const boldParts = line.split(/\*\*(.+?)\*\*/g);
+                            const textRuns = boldParts.map((part, i) =>
+                                new TextRun({ text: part, size: 22, bold: i % 2 === 1 })
+                            );
                             children.push(
-                                new Paragraph({
-                                    children: [new TextRun({ text: line })],
-                                    spacing: { after: 150 }
-                                })
+                                new Paragraph({ children: textRuns, spacing: { after: 120 } })
                             );
                         }
                     }
@@ -1424,7 +1646,10 @@ Generate the complete proposal now, with each requested section clearly separate
             });
 
             const doc = new Document({
-                sections: [{ properties: {}, children }]
+                sections: [{
+                    properties: { page: { margin: { top: 1440, right: 1440, bottom: 1440, left: 1440 } } },
+                    children
+                }]
             });
 
             const blob = await Packer.toBlob(doc);
@@ -1439,81 +1664,70 @@ Generate the complete proposal now, with each requested section clearly separate
         function exportToPptx() {
             if (!generatedProposal) return;
 
-            const data = getFormData();
+            const data = currentFormData || getFormData();
             const pptx = new PptxGenJS();
 
             pptx.layout = 'LAYOUT_WIDE';
             pptx.title = `Proposal for ${data.client.company || 'Client'}`;
+            pptx.author = data.yourCompany.company || 'Your Company';
 
             // Title slide
             let slide = pptx.addSlide();
+            slide.addShape('rect', { x: 0, y: 0, w: '100%', h: '100%', fill: { color: 'f3e8ff' } });
+            slide.addShape('rect', { x: 0, y: 4.5, w: '100%', h: 1, fill: { color: '7c3aed' } });
+
             slide.addText(`Proposal for ${data.client.company || 'Client'}`, {
-                x: 0.5, y: 2, w: '90%', h: 1,
-                fontSize: 36, bold: true, color: '1a1a2e', align: 'center'
+                x: 0.5, y: 1.5, w: '90%', h: 1.2,
+                fontSize: 44, bold: true, color: '1a1a2e', align: 'center'
             });
             slide.addText(`Prepared by ${data.yourCompany.company || 'Your Company'}`, {
-                x: 0.5, y: 3.2, w: '90%', h: 0.5,
-                fontSize: 18, color: '666666', align: 'center'
+                x: 0.5, y: 2.8, w: '90%', h: 0.6,
+                fontSize: 22, color: '4b5563', align: 'center'
             });
             slide.addText(new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }), {
-                x: 0.5, y: 3.8, w: '90%', h: 0.5,
-                fontSize: 14, color: '999999', align: 'center'
+                x: 0.5, y: 3.5, w: '90%', h: 0.5,
+                fontSize: 16, color: '6b7280', align: 'center'
             });
 
             // Content slides
             Object.entries(proposalSections).forEach(([title, content]) => {
                 slide = pptx.addSlide();
+                slide.addShape('rect', { x: 0, y: 0, w: '100%', h: 1.1, fill: { color: '7c3aed' } });
+                slide.addText(title, { x: 0.5, y: 0.25, w: '90%', h: 0.6, fontSize: 26, bold: true, color: 'ffffff' });
 
-                // Section title
-                slide.addText(title, {
-                    x: 0.5, y: 0.3, w: '90%', h: 0.8,
-                    fontSize: 28, bold: true, color: '7c3aed'
-                });
-
-                // Content - split into bullet points or paragraphs
                 const lines = content.split('\n').filter(l => l.trim());
                 const bullets = [];
                 let currentText = '';
 
                 lines.forEach(line => {
                     if (line.startsWith('- ')) {
-                        if (currentText) {
-                            bullets.push({ text: currentText, options: { bullet: false } });
-                            currentText = '';
-                        }
-                        bullets.push({ text: line.substring(2), options: { bullet: true } });
+                        if (currentText) { bullets.push({ text: currentText, options: { bullet: false } }); currentText = ''; }
+                        bullets.push({ text: line.substring(2).replace(/\*\*/g, ''), options: { bullet: true } });
                     } else if (line.startsWith('### ')) {
-                        if (currentText) {
-                            bullets.push({ text: currentText, options: { bullet: false } });
-                            currentText = '';
-                        }
+                        if (currentText) { bullets.push({ text: currentText, options: { bullet: false } }); currentText = ''; }
                         bullets.push({ text: line.substring(4), options: { bullet: false, bold: true } });
                     } else {
-                        if (bullets.length === 0) {
-                            currentText += (currentText ? ' ' : '') + line;
-                        } else {
-                            bullets.push({ text: line, options: { bullet: false } });
-                        }
+                        if (bullets.length === 0) { currentText += (currentText ? ' ' : '') + line.replace(/\*\*/g, ''); }
+                        else { bullets.push({ text: line.replace(/\*\*/g, ''), options: { bullet: false } }); }
                     }
                 });
+                if (currentText) { bullets.push({ text: currentText, options: { bullet: false } }); }
 
-                if (currentText) {
-                    bullets.push({ text: currentText, options: { bullet: false } });
-                }
-
-                // Add text with proper formatting
-                const textRows = bullets.slice(0, 8).map(b => ({
+                const textRows = bullets.slice(0, 10).map(b => ({
                     text: b.text,
-                    options: { fontSize: 14, color: '374151', bullet: b.options.bullet, bold: b.options.bold }
+                    options: { fontSize: 15, color: '374151', bullet: b.options.bullet ? { type: 'bullet', color: '7c3aed' } : false, bold: b.options.bold, breakLine: true }
                 }));
 
                 if (textRows.length > 0) {
-                    slide.addText(textRows, {
-                        x: 0.5, y: 1.3, w: '90%', h: 4,
-                        valign: 'top'
-                    });
+                    slide.addText(textRows, { x: 0.5, y: 1.4, w: '92%', h: 4, valign: 'top' });
                 }
             });
+
+            // Thank you slide
+            slide = pptx.addSlide();
+            slide.addShape('rect', { x: 0, y: 0, w: '100%', h: '100%', fill: { color: 'f3e8ff' } });
+            slide.addText('Thank You', { x: 0.5, y: 2, w: '90%', h: 1, fontSize: 44, bold: true, color: '7c3aed', align: 'center' });
+            slide.addText(`${data.yourCompany.name || ''}\n${data.yourCompany.email || ''}`, { x: 0.5, y: 3.2, w: '90%', h: 1, fontSize: 18, color: '4b5563', align: 'center' });
 
             pptx.writeFile({ fileName: `Proposal_${data.client.company || 'Client'}_${new Date().toISOString().split('T')[0]}.pptx` });
         }
@@ -1521,12 +1735,15 @@ Generate the complete proposal now, with each requested section clearly separate
         function copyProposal() {
             if (!generatedProposal) return;
 
-            const data = getFormData();
+            const data = currentFormData || getFormData();
             let text = `PROPOSAL FOR ${(data.client.company || 'CLIENT').toUpperCase()}\n`;
             text += `Prepared by ${data.yourCompany.company || 'Your Company'}\n`;
             text += `${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}\n\n`;
-            text += '─'.repeat(50) + '\n\n';
-            text += generatedProposal;
+            text += String.fromCharCode(9472).repeat(50) + '\n\n';
+
+            text += Object.entries(proposalSections)
+                .map(([title, content]) => `## ${title}\n\n${content}`)
+                .join('\n\n');
 
             navigator.clipboard.writeText(text).then(() => {
                 const btn = document.getElementById('copyBtn');
@@ -1548,6 +1765,8 @@ Generate the complete proposal now, with each requested section clearly separate
             `;
             generatedProposal = null;
             proposalSections = {};
+            currentFormData = null;
+            document.getElementById('saveBtn').disabled = true;
             document.getElementById('exportWordBtn').disabled = true;
             document.getElementById('exportPptxBtn').disabled = true;
             document.getElementById('copyBtn').disabled = true;
